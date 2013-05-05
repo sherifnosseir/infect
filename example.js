@@ -1,6 +1,11 @@
-var http = require('http');
-http.createServer(function (req, res) {
-  res.writeHead(200, {'Content-Type': 'text/plain'});
-  res.end('Hello World\n');
-}).listen(1337, '209.141.61.27');
-console.log('Server running at http://http://209.141.61.27/:1337/');
+var io = require('socket.io').listen(80);
+
+io.sockets.on('connection', function (socket) {
+  socket.emit('news', { hello: 'world' });
+  socket.on('my other event', function (data) {
+    console.log(data);
+  });
+  socket.on('play',function(){
+  	io.broadcast.emit('playnote',90);
+  })
+});
