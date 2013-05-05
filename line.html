@@ -38,20 +38,25 @@
       // maximums/consts
       var maxX = document.getElementById('myCanvas').width; // width of canvas
       var maxY = document.getElementById('myCanvas').height; // height of canvas
-      var maxLines = 4; // number of lines to swipe
+      var maxLines = 1; // number of lines to swipe [change: fixed to 1, since we'll use 'blocks' instead of lines]
       var maxCols = 4; // number of cols for lines to appear on
-      var lineWidth = 10; // arbitrary width of a line
+      //var lineHeight = 10; // arbitrary width of a line
+      var maxLineHeight = 200; // [change: this is the maximum height of the blocks]
       var lineDistance = 20; // distance between each line (if multiple) ****** this is dangerous: if maxLines is big enough and numLines rolls high enough, lines could go out of bounds.
-      var topAndBottomPadding = 100; // 10 each.
+      var handicap = 0.2; // percentage of block ends to be 'generous' for
+      
       
       // derived
       var lineLength = Math.floor(maxX/maxCols); // length of each line, or width of each column
+      //var topAndBottomPadding = maxLineHeight; // 10 each.
 
       // randoms
       var numLines = Math.floor((Math.random()*maxLines)+1);
       var whichCol = Math.floor((Math.random()*maxCols));
       // var firstY = Math.floor((Math.random()*(maxY-topAndBottomPadding))+topAndBottomPadding/2)-((numLines-1)*lineDistance); // y position of the top line
-      var firstY = Math.floor((Math.random()*(maxY-topAndBottomPadding))+topAndBottomPadding/2); // y position of the top line
+      var firstY = Math.floor((Math.random()*(maxY-maxLineHeight))+maxLineHeight/2); // y position of the top line
+      //var lineHeight = Math.floor((Math.random()*maxLineHeight)+1);
+      var lineHeight = 200;
 
       // vertical grid
       for (var i = 0; i < maxCols; i++) {
@@ -66,13 +71,11 @@
         context.beginPath();
         context.moveTo(whichCol*lineLength, firstY+i*lineDistance);
         context.lineTo((whichCol+1)*lineLength, firstY+i*lineDistance);
-        context.lineWidth = lineWidth;
-        context.lineCap = 'round';
+        context.lineWidth = lineHeight;
+        //context.lineCap = 'round';
         context.stroke();
       }
-      console.log("firstY = " + firstY + ", col = " + whichCol + ", numLines = " + numLines);
-
-
+      console.log("firstY = " + firstY + ", col = " + whichCol + ", lineHeight = " + lineHeight);
 
       // mousePositions
       var mouseDownX;
@@ -114,7 +117,7 @@
         // check for col first
         if (inCol) {
           // check for all line clear
-          if (((mouseDownY <= firstY) && (mouseUpY >= (firstY+(numLines-1)*lineDistance))) || ((mouseUpY <= firstY) && (mouseDownY >= (firstY+(numLines-1)*lineDistance)))){
+          if (((mouseDownY <= (firstY-lineHeight/2)*(1+handicap)) && (mouseUpY >= ((firstY+lineHeight/2)*(1-handicap)))) || ((mouseUpY <= (firstY-lineHeight/2)*(1+handicap)) && (mouseDownY >= ((firstY+lineHeight/2)*(1-handicap))))) {
             hit = true;
             console.log('HIT!!');
             alert("yay");
@@ -142,43 +145,30 @@
           }
           console.log('\t\tmove ' + mousePosX + ", " + mousePosY + ", inCol = " + inCol);
         }
-
       }
 
-      // document.addEventListener("DOMContentLoaded", init, false);
-
-      //  function init()
-      //  {
-      //    var canvas = document.getElementById("myCanvas");
-      //    canvas.addEventListener("mousedown", getPosition, false);
-      //    canvas.addEventListener("mouseup", getPosition, false);
-      //  }
-
-      //  function getPosition(event)
-      //  {
-      //    var x = new Number();
-      //    var y = new Number();
-      //    var canvas = document.getElementById("myCanvas");
-
-      //    if (event.x != undefined && event.y != undefined)
-      //    {
-      //      x = event.x;
-      //      y = event.y;
-      //    }
-      //    else // Firefox method to get the position
-      //    {
-      //      x = event.clientX + document.body.scrollLeft + document.documentElement.scrollLeft;
-      //      y = event.clientY + document.body.scrollTop + document.documentElement.scrollTop;
-      //    }
-
-      //    x -= canvas.offsetLeft;
-      //    y -= canvas.offsetTop;
-
-      //    console.log("Down x: " + x + "  y: " + y);
-      //  }   
+      // timerAnimation();
+      setInterval(timerAnimation, 16); // target fps = 60 (, 16 ~= 1000/60)
 
 
+      
+      var timerWidth = 0; // initial width of the timer
+      var timerWidthAdd = lineLength/33; //***** timerWidthAdd maybe should be some function of the speed of which the note needs to be hit
 
+      function timerAnimation() {
+        // animate timer
+
+        timerWidth += timerWidthAdd;
+        if (timerWidth >= lineLength) {
+          timerWidth = lineLength;
+        }
+
+        //clear();
+        context.save();
+        context.fillStyle = "blue";
+        context.fillRect(whichCol*lineLength, firstY-lineHeight/2, timerWidth, lineHeight); //asdfljasdfl;jaf
+        context.restore();
+      }
 
 
     </script>
