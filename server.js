@@ -76,7 +76,7 @@ function process(file) {
 			ctime=cdate.getTime()-startTime;
 			var trackNo=-1;
 			console.log(ctime);
-			if(trackAssigned>=(tracksNum.length-1))
+			if(trackAssigned>=(tracksNum.length))
 				trackNo=-1;
 			else{
 				trackNo=trackAssigned;
