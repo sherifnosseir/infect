@@ -92,7 +92,7 @@ function process(file) {
 			socket.broadcast.emit('playnote', playedNote);
 		});
 		
-		socket.on('userPlay',function(delay,trackNo){
+		socket.on('userPlay',function(trackNo,delay){
 			console.log(delay+';;;;;'+trackNo);
 			socket.broadcast.emit('setDelay',delay,trackNo);
 		});
