@@ -30,7 +30,7 @@
 		//var socket = io.connect('209.141.61.27');
 		
 		// MIDI variables
-		var animationDur;
+		var animationDur=500;
 		var MIDIs;
 		var playedKey;
 		var midiObject;
@@ -93,8 +93,9 @@
 						var note=midiObject.track[trackNo].event[n].data[0];
 						nodeArray.push(note);
 						var diff=time-mystartTime+animationDur;
+						console.log(diff);
 						if(diff>0)
-						setTimeout(function(){playNote(tracksArray[i].pop());},diff);
+							setTimeout(function(){playNote(tracksArray[i].pop());},diff);
 						time = time + midiObject.track[trackNo].event[n].deltaTime*(960/midiObject.timeDivision);
 						
 					}
