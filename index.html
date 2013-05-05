@@ -37,7 +37,7 @@
 		var start = false;
 		var mystartTime;
 		var nodeArray = new Array();
-		var tracksArray = new Array();
+		var tracksArray = new Array(Array());
 		var myTrack=-1;
 		var tracksNum=new Array();
 		
@@ -90,12 +90,16 @@
 					
 					
 					if (midiObject.track[trackNo].event[n].type == 8 || midiObject.track[trackNo].event[n].type == 9) {
-						var note=midiObject.track[trackNo].event[n].data[0];
-						nodeArray.push(note);
-						var diff=time-mystartTime+animationDur;
+						
+						var diff=time-mystartTime-animationDur;
 						console.log(diff);
-						if(diff>0)
+						if(diff>0){
+							var note=midiObject.track[trackNo].event[n];
+							nodeArray.push(note);
 							setTimeout(function(){playNote(tracksArray[i].pop());},diff);
+							
+						}
+							
 						time = time + midiObject.track[trackNo].event[n].deltaTime*(960/midiObject.timeDivision);
 						
 					}
@@ -114,12 +118,33 @@
 			console.log("note:"+note);
 			var velocity = 127;
 			
-			//if(node.type == 8) {
-				//MIDI.noteOff(0, note, delay);
-			//} else {
-				MIDIs.noteOn(0, note, velocity, delay);
-			//}
+			
+			if(node.type == 8) {
+				MIDI.noteOff(0, note.data[0], delay);
+			} else {
+				MIDIs.noteOn(0, note.data[0], note.data[1], delay);
+			}
 		}
+		function palyerTrack(node,track){
+			var delay=animationDur;
+			var note=node
+			if(node.type == 8) {
+				MIDI.noteOff(0, note.data[0], delay);
+			} else {
+				MIDIs.noteOn(0, note.data[0], note.data[1], delay);
+			}
+			
+		}
+		function serverTrack(node,track){
+			var delay=animationDur;
+			var note=node
+			if(node.type == 8) {
+				MIDI.noteOff(0, note.data[0], delay);
+			} else {
+				MIDIs.noteOn(0, note.data[0], note.data[1], delay);
+			}
+		}
+		
 		
 
 		

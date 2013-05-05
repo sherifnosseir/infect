@@ -20,7 +20,7 @@ function handler(req, res) {
 var midifile;
 var nodeArray=new Array();
 
-fs.readFile('./test.mid', function(err, data) {
+fs.readFile('./test2.mid', function(err, data) {
 	midifile = data;
 	process(midifile);
 });
