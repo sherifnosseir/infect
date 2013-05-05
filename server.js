@@ -87,9 +87,9 @@ function process(file) {
 
 		socket.on('play', function(playedNote) {
 			socket.broadcast.emit('playnote', playedNote);
-		})
+		});
 		
-		socket.on('play',fucntion)
+		socket.on('play',function(){});
 		//socket.on('user')
 	});
 
