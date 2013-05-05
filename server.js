@@ -18,42 +18,58 @@ function handler(req, res) {
 }
 
 var midifile;
-fs.readFile('./test.mid', function (err, data) {
-  
-  
-  midifile=data;
-  
-  //console.log(util.inspect(midifile, false, null));
-  console.log(err);
-  process(midifile);
+var nodeArray=new Array();
+fs.readFile('./test.mid', function(err, data) {
+
+	midifile = data;
+
+	//console.log(util.inspect(midifile, false, null));
+	//console.log(err);
+	process(midifile);
 });
 
-
-function MyCallback(obj){
-			console.log(obj);
-			//alert("Done! check your console Log for output dump");
-		};
-		
+function MyCallback(obj) {
+	console.log(obj);
+	//alert("Done! check your console Log for output dump");
+};
+var midiObj;
 function process(file) {
+
+	//console.log(file);
+
+	midiObj = JSMIDIParser.parse(file);
+	console.log(midiObj);
+	var time = 0;
+	function sendall(thenode){
+		console.log('hello:' + thenode);
+		io.sockets.emit('playnote',thenode);
 		
-		//console.log(file);
-		
-		var t=JSMIDIParser.parse(file);
-		console.log(t);
 	}
-//process(midifile);
-io.sockets.on('connection', function(socket) {
-	socket.emit('news', {
-		hello : 'world'
-	});
-	socket.on('my other event', function(data) {
-		console.log(data);
-	});
-	
+	console.log(midiObj.track[1].event.length);
+	for ( n = 0; n < midiObj.track[1].event.length - 1; n++) {
+		console.log("type:"+midiObj.track[1].event[n].type);
+		if (midiObj.track[1].event[n].type == 8 || midiObj.track[1].event[n].type == 9) {
+			var note=midiObj.track[1].event[n].data[0];
+			nodeArray.push(note);
+			setTimeout(function(){sendall(nodeArray.pop());} , time*12);
+			time = time + midiObj.track[1].event[n].deltaTime;
+		}
+		//console.log(time);
+		//console.log(n);
+		//console.log(t);
+	}
 
-	socket.on('play', function() {
-		socket.broadcast.emit('playnote', 90);
-	})
-	
+	//process(midifile);
 
-}); 
+	io.sockets.on('connection', function(socket) {
+
+		socket.on('my other event', function(data) {
+			console.log(data);
+		});
+		socket.on('play', function(playedNote) {
+			socket.broadcast.emit('playnote', playedNote);
+		})
+	});
+
+}
+
