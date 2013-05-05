@@ -36,13 +36,13 @@ function process(file) {
 	tracksNum=new Array();
 	trackAssigned=0;
 	
-	for(var i=0;i<track.length;i++){
-		if(track[i].event.length>50){
-			trasksNum.push(i);
+	for(var i=0;i<midiObj.track.length;i++){
+		if(midiObj.track[i].event.length>50){
+			tracksNum.push(i);
 		}
 	}
 
-	var time = 0;
+	
 	function sendall(thenode){
 		console.log('hello:' + thenode);
 		io.sockets.emit('playnote',thenode);
@@ -89,6 +89,7 @@ function process(file) {
 			socket.broadcast.emit('playnote', playedNote);
 		})
 		
+		socket.on('play',fucntion)
 		//socket.on('user')
 	});
 
