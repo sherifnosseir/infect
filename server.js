@@ -1,4 +1,4 @@
-var app = require('http').createServer(handler), io = require('socket.io').listen(app), fs = require('fs')
+var app = require('http').createServer(handler), io = require('socket.io').listen(app,{log:false}), fs = require('fs')
 var util = require('util');
 var Buffer = require('buffer').Buffer;
 app.listen(8080);
@@ -43,12 +43,13 @@ function process(file) {
 	}
 
 	
-	function sendall(thenode){
+	/*function sendall(thenode){
 		console.log('hello:' + thenode);
 		io.sockets.emit('playnote',thenode);
-	}
+	}*/
 	var stime=new Date();//compute start time of the current midi file
-	startTime=stime.getMilliseconds();
+	startTime=stime.getTime();
+	console.log('startTime'+startTime);
 	/*
 	for ( n = 0; n < midiObj.track[1].event.length - 1; n++) {
 		//console.log("type:"+midiObj.track[1].event[n].type);
@@ -67,16 +68,18 @@ function process(file) {
 
 	io.sockets.on('connection', function(socket) {
 		socket.on('connect',function(){
-			socket.emit('loadfile',midiObj);
+			socket.emit('loadfile',midiObj,tracksNum);
 		});
 		socket.on('ready',function(){
 			var cdate=new Date();
-			var trackNo=-1
-			ctime=cdate.getMilliseconds-startTime;
+			
+			ctime=cdate.getTime()-startTime;
+			var trackNo=-1;
+			console.log(ctime);
 			if(trackAssigned>=(tracksNum.length-1))
 				trackNo=-1;
 			else{
-				trackNo=traceAssigned;
+				trackNo=trackAssigned;
 				trackAssigned++;
 				
 			}
@@ -87,9 +90,11 @@ function process(file) {
 
 		socket.on('play', function(playedNote) {
 			socket.broadcast.emit('playnote', playedNote);
-		})
+		});
 		
-		socket.on('play',fucntion)
+		socket.on('userPlay',function(delay,trackNo){
+			socket.broadcast.emit('setDelay',delay,trackNo);
+		});
 		//socket.on('user')
 	});
 

@@ -30,20 +30,25 @@
 		//var socket = io.connect('209.141.61.27');
 		
 		// MIDI variables
+		var animationDur=500;
 		var MIDIs;
 		var playedKey;
 		var midiObject;
 		var start = false;
-		var currentTime;
+		var mystartTime;
 		var nodeArray = new Array();
+		var tracksArray = new Array(Array());
+		var myTrack=-1;
+		var tracksNum=new Array();
 		
 		
 		socket.emit("connect");
-		socket.on('loadfile', function(song) {
+		socket.on('loadfile', function(song,thetracks) {
 			// Begin loading indication.
 			var loader = new widgets.Loader({
 				message: "loading: Soundfont..."
 			});
+			tracksNum=thetracks;
 
 			//Set up MIDI properties
 			MIDI.loadPlugin({
@@ -54,7 +59,7 @@
 					MIDI.programChange(0, 0);
 					MIDI.programChange(1, 118);
 					MIDIs = MIDI;
-					play();
+					//play();
 				}
 			});
 			
@@ -66,43 +71,84 @@
 			
 		});
 		
-		socket.on("currenttime", function(time){
-			currentTime = 0;
-			start = true;
-			//play();
+		socket.on("currenttime", function(time,track){
+			mystartTime = time;
+			//start = true;
+			myTrack=track;
+			
+			play();
 		});
 
 		function play() {
-			if(start) {
-				time=0
-				for ( n = 0; n < midiObject.track[1].event.length - 1; n++) {
-					console.log("type:"+midiObject.track[1].event[n].type);
-					if (midiObject.track[1].event[n].type == 8 || midiObject.track[1].event[n].type == 9) {
-						var note=midiObject.track[1].event[n].data[0];
-						nodeArray.push(note);
-						setTimeout(function(){playNote(nodeArray.pop());}, time*12);
-						time = time + midiObject.track[1].event[n].deltaTime;
+			for(var i =0;i<tracksNum.length;i++){
+				trackNo=tracksNum[i];
+				time=0;
+				var nodeArray=new Array();
+				for ( n = 0; n < midiObject.track[trackNo].event.length - 1; n++) {
+					//console.log("type:"+midiObject.track[trackNo].event[n].type);
+					
+					
+					
+					if (midiObject.track[trackNo].event[n].type == 8 || midiObject.track[trackNo].event[n].type == 9) {
+						
+						var diff=time-mystartTime-animationDur;
+						console.log(diff);
+						if(diff>0){
+							var note=midiObject.track[trackNo].event[n];
+							nodeArray.push(note);
+							setTimeout(function(){playNote(tracksArray[i].pop());},diff);
+							
+						}
+							
+						time = time + midiObject.track[trackNo].event[n].deltaTime*(960/midiObject.timeDivision);
+						
 					}
+					
 					//console.log(time);
 					//console.log(n);
 					//console.log(t);
 				}
-			}		
+				tracksArray.push(nodeArray);
+			}	
 		}
 		
-		function playNote (node) {
+		function playNote (node,track) {
 			var delay = 0;
 			var note = node;
 			console.log("note:"+note);
 			var velocity = 127;
 			
-			//if(node.type == 8) {
-				//MIDI.noteOff(0, note, delay);
-			//} else {
-				MIDIs.noteOn(0, note, velocity, delay);
-			//}
+			
+			if(node.type == 8) {
+				MIDI.noteOff(0, note.data[0], delay);
+			} else {
+				MIDIs.noteOn(0, note.data[0], note.data[1], delay);
+			}
+		}
+		function palyerTrack(node,track){
+			var delay=animationDur;
+			var note=node
+			if(node.type == 8) {
+				MIDI.noteOff(0, note.data[0], delay);
+			} else {
+				MIDIs.noteOn(0, note.data[0], note.data[1], delay);
+			}
+			
+		}
+		function serverTrack(node,track){
+			var delay=animationDur;
+			var note=node
+			if(node.type == 8) {
+				MIDI.noteOff(0, note.data[0], delay);
+			} else {
+				MIDIs.noteOn(0, note.data[0], note.data[1], delay);
+			}
 		}
 		
+		
+
+		
+		/*
 		$('#button1').click(function(){
 			playedKey = 25;
 			socket.emit('play', playedKey);
@@ -123,13 +169,14 @@
 			play();
 			console.log("Playing client tone");
 		});
-		
+		*/
+		/*
 		socket.on('playnote', function(note){
 			console.log("note is " + note);
 			playedKey = note;
 			play();
 			console.log("Playing server tone");
-		});
+		});*/
 
 		</script>
 	</body>
