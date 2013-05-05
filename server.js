@@ -19,56 +19,67 @@ function handler(req, res) {
 
 var midifile;
 var nodeArray=new Array();
-fs.readFile('./test.mid', function(err, data) {
 
+fs.readFile('./test2.mid', function(err, data) {
 	midifile = data;
-
-	//console.log(util.inspect(midifile, false, null));
-	//console.log(err);
 	process(midifile);
 });
 
-function MyCallback(obj) {
-	console.log(obj);
-	//alert("Done! check your console Log for output dump");
-};
 var midiObj;
+var startTime;
+var trackNum;
+var trackAssigned;
+
 function process(file) {
 
-	//console.log(file);
-
 	midiObj = JSMIDIParser.parse(file);
-	console.log(midiObj);
+
 	var time = 0;
 	function sendall(thenode){
 		console.log('hello:' + thenode);
 		io.sockets.emit('playnote',thenode);
-		
 	}
-	console.log(midiObj.track[1].event.length);
+	var stime=new Date();//compute start time of the current midi file
+	startTime=stime.getMilliseconds();
+	/*
 	for ( n = 0; n < midiObj.track[1].event.length - 1; n++) {
-		console.log("type:"+midiObj.track[1].event[n].type);
+		//console.log("type:"+midiObj.track[1].event[n].type);
 		if (midiObj.track[1].event[n].type == 8 || midiObj.track[1].event[n].type == 9) {
 			var note=midiObj.track[1].event[n].data[0];
 			nodeArray.push(note);
-			setTimeout(function(){sendall(nodeArray.pop());} , time*12);
+			//setTimeout(function(){sendall(nodeArray.pop());} , time*12);
 			time = time + midiObj.track[1].event[n].deltaTime;
 		}
 		//console.log(time);
 		//console.log(n);
 		//console.log(t);
-	}
+	}*/
 
 	//process(midifile);
 
 	io.sockets.on('connection', function(socket) {
-
-		socket.on('my other event', function(data) {
-			console.log(data);
+		socket.on('connect',function(){
+			socket.emit('loadfile',midiObj);
 		});
+		socket.on('ready',function(){
+			var cdate=new Date();/*
+			ctime=cdate.getMilliseconds-startTime;
+			if(trackAssigned>=TrackNum)
+				socket.emit(-1);
+			else{
+				trackAssigned++;
+				socket.emit(track)
+			}
+				*/
+				ctime=0;
+			socket.emit('currenttime',ctime);
+		});
+
 		socket.on('play', function(playedNote) {
 			socket.broadcast.emit('playnote', playedNote);
 		})
+		
+		//socket.on('user')
 	});
 
 }
