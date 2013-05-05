@@ -13,20 +13,26 @@
     <canvas id="myCanvas" width="940" height="400"></canvas>
     <script>
 
-window.addEventListener("load",function() {
-  setTimeout(function(){
-    window.scrollTo(0, 1);
-  }, 1);
-});
+      // remove safaru bars (not working?)
+      window.addEventListener("load",function() {
+        setTimeout(function(){
+          window.scrollTo(0, 1);
+        }, 1);
+      });
 
       // prevent "bouncing"
       document.ontouchmove = function(e) {e.preventDefault()};
+
+      window.onload=function() {
+       var myBlock = document.getElementById('myCanvas');
+       alert(myBlock.getElementWidth());
+      };
 
 
       var canvas = document.getElementById('myCanvas');
       var context = canvas.getContext('2d');
 
-      var maxX = 940;
+      var maxX = 940; // make these dimensions equal to canvas width/height
       var maxY = 400;
 
 
