@@ -16,7 +16,7 @@ function handler(req, res) {
 
 var midifile;
 fs.readFile('/test.mid', function (err, data) {
-  if (err) throw err;
+  
   midifile=data;
 });
 
