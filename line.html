@@ -2,12 +2,14 @@
 <html>
   <head>
     <link rel="stylesheet" type="text/css" href="line.css">
+    
     <style>
       body {
         margin: 0px;
         padding: 0px;
       }
     </style>
+    <script src="http://code.jquery.com/jquery-1.9.0.min.js"></script>
   </head>
   <body>
     <canvas id="myCanvas" width="940" height="400"></canvas>
@@ -23,27 +25,47 @@
       // prevent "bouncing"
       document.ontouchmove = function(e) {e.preventDefault()};
 
-      window.onload=function() {
-       var myBlock = document.getElementById('myCanvas');
-       alert(myBlock.getElementWidth());
-      };
+      // $('#myCanvas').click(function() {
+      //  var myBlock = document.getElementById('myCanvas');
+      //  alert("Hello " + document.getElementById('myCanvas').height);
+      // });
 
 
       var canvas = document.getElementById('myCanvas');
       var context = canvas.getContext('2d');
 
-      var maxX = 940; // make these dimensions equal to canvas width/height
-      var maxY = 400;
+      var maxX = document.getElementById('myCanvas').width;
+      var maxY = document.getElementById('myCanvas').height;
+      var maxLines = 3;
 
-
-
+      var numLines = Math.floor((Math.random()*maxLines)+1);
 
       var randXs = Math.floor((Math.random()*maxX)+1);
       var randYs = Math.floor((Math.random()*maxY)+1);
       var randXf = Math.floor((Math.random()*maxX)+1);
       var randYf = Math.floor((Math.random()*maxY)+1);
 
+      var badLines = true;
 
+      var dist = Math.sqrt((Math.pow((randXs-randXf),2))+(Math.pow((randYs-randYf),2))); 
+
+      var rerollcount = 0;
+
+      while (badLines) {
+        if (dist >= 50 && dist <= 200) {
+          badLines = false;
+          console.log(rerollcount + " " + dist);
+        }
+        else {
+          rerollcount++;
+          randXs = Math.floor((Math.random()*maxX)+1);
+          randYs = Math.floor((Math.random()*maxY)+1);
+          randXf = Math.floor((Math.random()*maxX)+1);
+          randYf = Math.floor((Math.random()*maxY)+1);
+          dist = Math.sqrt((Math.pow((randXs-randXf),2))+(Math.pow((randYs-randYf),2))); 
+        }
+      }
+      
       context.beginPath();
       context.moveTo(randXs, randYs);
       context.lineTo(randXf, randYf);
