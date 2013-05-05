@@ -87,7 +87,8 @@
 		
 		socket.on('playnote', function(note){
 			console.log("note is " + note);
-			play(note);
+			playedKey = note;
+			play();
 			console.log("Playing server tone");
 		});
 
