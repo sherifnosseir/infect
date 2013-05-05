@@ -30,46 +30,34 @@
       //  alert("Hello " + document.getElementById('myCanvas').height);
       // });
 
-
+      // canvas
       var canvas = document.getElementById('myCanvas');
       var context = canvas.getContext('2d');
 
-      var maxX = document.getElementById('myCanvas').width;
-      var maxY = document.getElementById('myCanvas').height;
-      var maxLines = 3;
+      // maximums/consts
+      var maxX = document.getElementById('myCanvas').width; // width of canvas
+      var maxY = document.getElementById('myCanvas').height; // height of canvas
+      var maxLines = 3; // number of lines to swipe
+      var maxCols = 4; // number of cols for lines to appear on
+      var lineDistance = 50; // distance between each line (if multiple) ****** this is dangerous: if maxLines is big enough and numLines rolls high enough, lines could go out of bounds.
 
+      // derived
+      var lineLength = Math.floor(maxX/maxCols); // length of each line, or width of each column
+
+      // randoms
       var numLines = Math.floor((Math.random()*maxLines)+1);
+      var whichCol = Math.floor((Math.random()*maxCols));
+      var firstY = Math.floor((Math.random()*maxY)+1)-((numLines-1)*lineDistance); // y position of the top line
 
-      var randXs = Math.floor((Math.random()*maxX)+1);
-      var randYs = Math.floor((Math.random()*maxY)+1);
-      var randXf = Math.floor((Math.random()*maxX)+1);
-      var randYf = Math.floor((Math.random()*maxY)+1);
-
-      var badLines = true;
-
-      var dist = Math.sqrt((Math.pow((randXs-randXf),2))+(Math.pow((randYs-randYf),2))); 
-
-      var rerollcount = 0;
-
-      while (badLines) {
-        if (dist >= 50 && dist <= 200) {
-          badLines = false;
-          console.log(rerollcount + " " + dist);
-        }
-        else {
-          rerollcount++;
-          randXs = Math.floor((Math.random()*maxX)+1);
-          randYs = Math.floor((Math.random()*maxY)+1);
-          randXf = Math.floor((Math.random()*maxX)+1);
-          randYf = Math.floor((Math.random()*maxY)+1);
-          dist = Math.sqrt((Math.pow((randXs-randXf),2))+(Math.pow((randYs-randYf),2))); 
-        }
+      // gogogo
+      for (var i = 0; i < numLines; i++) {
+        context.beginPath();
+        context.moveTo(whichCol*lineLength, firstY+i*lineDistance);
+        context.lineTo((whichCol+1)*lineLength, firstY+i*lineDistance);
+        context.stroke();
       }
-      
-      context.beginPath();
-      context.moveTo(randXs, randYs);
-      context.lineTo(randXf, randYf);
-      context.stroke();
+      console.log("col = " + whichCol + ", numLines = " + numLines);
+
     </script>
   </body>
 </html>
