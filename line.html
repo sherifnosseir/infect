@@ -1,8 +1,6 @@
 <!DOCTYPE HTML>
 <html>
   <head>
-    <meta name="apple-mobile-web-app-capable" content="yes" />
-    <meta name="apple-mobile-web-app-status-bar-style" content="black" />
     <link rel="stylesheet" type="text/css" href="line.css">
     <style>
       body {
@@ -15,12 +13,6 @@
     <canvas id="myCanvas" width="940" height="400"></canvas>
     <script>
 
-window.addEventListener("load",function() {
-  setTimeout(function(){
-    window.scrollTo(0, 1);
-  }, 1);
-});
-    
       // prevent "bouncing"
       document.ontouchmove = function(e) {e.preventDefault()};
 
