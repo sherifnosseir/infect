@@ -33,7 +33,7 @@
 		//var socket = io.connect('209.141.61.27');
 		
 		// MIDI variables
-		var animationDur;
+		var animationDur=500;
 		var MIDIs;
 		var playedKey;
 		var midiObject;
@@ -89,14 +89,15 @@
 				for ( n = 0; n < midiObject.track[trackNo].event.length - 1; n++) {
 					//console.log("type:"+midiObject.track[trackNo].event[n].type);
 					
-					
-					
 					if (midiObject.track[trackNo].event[n].type == 8 || midiObject.track[trackNo].event[n].type == 9) {
-						var note=midiObject.track[trackNo].event[n].data[0];
-						nodeArray.push(note);
-						var diff=time-mystartTime;
-						if(diff>0)
+						var diff=time-mystartTime-animationDur;
+						console.log(diff);
+						if(diff>0){
+							var note=midiObject.track[trackNo].event[n];
+							nodeArray.push(note);
 							setTimeout(function(){playNote(tracksArray[i].pop());},diff);
+							
+						}
 						time = time + midiObject.track[trackNo].event[n].deltaTime*(960/midiObject.timeDivision);
 						
 					}
@@ -104,7 +105,6 @@
 					//console.log(time);
 					//console.log(n);
 					//console.log(t);
-					drawNotes(nodeArray.pop());
 				}
 				tracksArray.push(nodeArray);
 			}
@@ -117,40 +117,31 @@
 			console.log("note:"+node);
 			var velocity = 127;
 			
-			//if(node.type == 8) {
-				//MIDI.noteOff(0, note, delay);
-			//} else {
-				MIDIs.noteOn(0, note, velocity, delay);
-			//}
+			if(node.type == 8) {
+				MIDI.noteOff(0, note.data[0], delay);
+			} else {
+				MIDIs.noteOn(0, note.data[0], note.data[1], delay);
+			}
 		}
-
-		var stage = new Kinetic.Stage({
-		        container: 'container',
-		        width: 578,
-		        height: 200
-		      });
-
-		function drawNotes(node) {
-			var layer = new Kinetic.Layer();
-
-		      var rect = new Kinetic.Rect({
-		        x: node,
-		        y: node,
-		        width: 100,
-		        height: 100,
-		        fill: 'cyan',
-		        stroke: 'black',
-		        strokeWidth: 4
-		      });
-
-			// add the shape to the layer
-			layer.add(rect);
-
-			// add the layer to the stage
-			stage.add(layer);
+		function palyerTrack(node,track){
+			var delay=animationDur;
+			var note=node
+			if(node.type == 8) {
+				MIDI.noteOff(0, note.data[0], delay);
+			} else {
+				MIDIs.noteOn(0, note.data[0], note.data[1], delay);
+			}
+			
 		}
-		
-
+		function serverTrack(node,track){
+			var delay=animationDur;
+			var note=node
+			if(node.type == 8) {
+				MIDI.noteOff(0, note.data[0], delay);
+			} else {
+				MIDIs.noteOn(0, note.data[0], note.data[1], delay);
+			}
+		}	
 		
 		/*
 		$('#button1').click(function(){
