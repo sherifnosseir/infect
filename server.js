@@ -27,12 +27,20 @@ fs.readFile('./test2.mid', function(err, data) {
 
 var midiObj;
 var startTime;
-var trackNum;
+var tracksNum=new Array();
 var trackAssigned;
 
 function process(file) {
 
 	midiObj = JSMIDIParser.parse(file);
+	tracksNum=new Array();
+	trackAssigned=0;
+	
+	for(var i=0;i<track.length;i++){
+		if(track[i].event.length>50){
+			trasksNum.push(i);
+		}
+	}
 
 	var time = 0;
 	function sendall(thenode){
@@ -62,17 +70,19 @@ function process(file) {
 			socket.emit('loadfile',midiObj);
 		});
 		socket.on('ready',function(){
-			var cdate=new Date();/*
+			var cdate=new Date();
+			var trackNo=-1
 			ctime=cdate.getMilliseconds-startTime;
-			if(trackAssigned>=TrackNum)
-				socket.emit(-1);
+			if(trackAssigned>=(tracksNum.length-1))
+				trackNo=-1;
 			else{
+				trackNo=traceAssigned;
 				trackAssigned++;
-				socket.emit(track)
+				
 			}
-				*/
-				ctime=0;
-			socket.emit('currenttime',ctime);
+				
+		
+			socket.emit('currenttime',ctime,trackNo);
 		});
 
 		socket.on('play', function(playedNote) {
