@@ -13,11 +13,13 @@
     <canvas id="myCanvas" width="940" height="400"></canvas>
     <script>
 
-      window.addEventListener("load", function() {
-        setTimeout(function(){
-          window.scrollTo(0, 1);
-        }, 0);
-      });
+      window.addEventListener("load",function() {
+  // Set a timeout...
+  setTimeout(function(){
+    // Hide the address bar!
+    window.scrollTo(0, 1);
+  }, 0);
+});
 
       document.ontouchmove = function(e) {e.preventDefault()};
 
