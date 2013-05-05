@@ -2,7 +2,7 @@ var app = require('http').createServer(handler)
   , io = require('socket.io').listen(app)
   , fs = require('fs')
 
-app.listen(80);
+app.listen(8080);
 
 function handler (req, res) {
   fs.readFile(__dirname + req.url,
@@ -24,7 +24,7 @@ io.sockets.on('connection', function (socket) {
   socket.on('my other event', function (data) {
     console.log(data);
   });
-  socket.on('play',function(){
-  	socket.broadcast.emit('playnote',90);
+  socket.on('play', function(playedNote){
+  	socket.broadcast.emit('playnote', playedNote);
   })
 });
