@@ -17,13 +17,16 @@
 	</head>
 	<body>
 		<div>
-			<input type="button" id="mybutton" value="hello">
+			<input type="button" id="button1" value="button 1">
+			<input type="button" id="button2" value="button 2">
+			<input type="button" id="button3" value="button 3">
 		</div>
 		<script>
 		
 		// MIDI variables
 		var player;
 		var MIDI;
+		var playedKey;
 		
 		window.onload = function() {
 			//Set up MIDI properties
@@ -51,25 +54,40 @@
 			//Play method can do whatever we want it to do
 			MIDI.programChange(0, 0);
 			MIDI.programChange(1, 118);
-			for (var n = 75; n < 76; n ++) {
-				var delay = n/100; // play one note every quarter second
-				var note = MIDI.pianoKeyOffset + n; // the MIDI note
-				var velocity = 127; // how hard the note hits
-				// play the note
-				MIDI.noteOn(0, note, velocity, delay);
-				// play the some note 3-steps up
-				MIDI.noteOn(1, note + 3, velocity, delay + 4);
-			}		
+			
+			var delay = 0.75; // play one note every quarter second
+			var note = MIDI.pianoKeyOffset + playedKey; // the MIDI note
+			var velocity = 127; // how hard the note hits
+			// play the note
+			MIDI.noteOn(0, note, velocity, delay);
+			// play the some note 3-steps up
+			MIDI.noteOn(1, note + 3, velocity, delay + 4);		
 		}
 		
-		$('#mybutton').click(function(){
-			socket.emit('play');
+		$('#button1').click(function(){
+			playedKey = 25;
+			socket.emit('play', playedKey);
 			play();
 			console.log("Playing client tone");
 		});
 		
-		socket.on('playnote', function(data){
+		$('#button2').click(function(){
+			playedKey = 50;
+			socket.emit('play', playedKey);
 			play();
+			console.log("Playing client tone");
+		});
+		
+		$('#button3').click(function(){
+			playedKey = 75;
+			socket.emit('play', playedKey);
+			play();
+			console.log("Playing client tone");
+		});
+		
+		socket.on('playnote', function(note){
+			console.log("note is " + note);
+			play(note);
 			console.log("Playing server tone");
 		});
 
