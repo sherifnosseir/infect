@@ -12,27 +12,28 @@
 		 <script src="MIDI.js-master/js/MIDI/Player.js" type="text/javascript"></script>
 		 <script src="MIDI.js-master/js/Window/DOMLoader.XMLHttp.js" type="text/javascript"></script>
 		 <script src="MIDI.js-master/js/Window/DOMLoader.script.js" type="text/javascript"></script>
-		<script src="kinetic.js"></script>
 	 	<!-- extras -->
 		 <script src="MIDI.js-master/inc/Base64.js" type="text/javascript"></script>
 		 <script src="MIDI.js-master/inc/base64binary.js" type="text/javascript"></script>
+		
+		<link rel="stylesheet" type="text/css" href="line.css">
 	</head>
 	<body>
-		
-		<div>
-			<input type="button" id="button1" value="button 1">
-			<input type="button" id="button2" value="button 2">
-			<input type="button" id="button3" value="button 3">
+		<canvas id="myCanvas" class="canvas" width="940" height="400"></canvas>
+		<div class="canvas">
+			<div id="s0"></div>
+			<div id="s1"></div>
+			<div id="s2"></div>
+			<div id="s3"></div>
 		</div>
 		
-		<div id="container"></div>
 			
-		<script>
-				
+		<script>		
 		var socket = io.connect('http://localhost:8080');
 		//var socket = io.connect('209.141.61.27');
 		
 		// MIDI variables
+		var sections = new Array();
 		var animationDur=500;
 		var MIDIs;
 		var playedKey;
@@ -111,21 +112,29 @@
 			
 		}
 		
+		var nodeCount = 0;
+		var modCount = 7;
+		
 		function playNote (node,track) {
-			var delay = 0;
-			var note = node;
-			console.log("note:"+node);
-			var velocity = 127;
 			
-			if(node.type == 8) {
-				MIDI.noteOff(0, note.data[0], delay);
-			} else {
-				MIDIs.noteOn(0, note.data[0], note.data[1], delay);
-			}
+				var delay = 0;
+				var note = node;
+				var velocity = 127;
+			
+				if(node.type == 8) {
+					MIDI.noteOff(0, note.data[0], delay);
+				} else {
+					MIDI.noteOn(0, note.data[0], note.data[1], delay);
+				}
+				if(nodeCount%modCount == 0) {
+					drawNotes(note);
+				}
+			nodeCount++;
 		}
+		
 		function palyerTrack(node,track){
 			var delay=animationDur;
-			var note=node
+			var note=node;
 			if(node.type == 8) {
 				MIDI.noteOff(0, note.data[0], delay);
 			} else {
@@ -135,7 +144,7 @@
 		}
 		function serverTrack(node,track){
 			var delay=animationDur;
-			var note=node
+			var note=node;
 			if(node.type == 8) {
 				MIDI.noteOff(0, note.data[0], delay);
 			} else {
@@ -143,36 +152,41 @@
 			}
 		}	
 		
-		/*
-		$('#button1').click(function(){
-			playedKey = 25;
-			socket.emit('play', playedKey);
-			play();
-			console.log("Playing client tone");
-		});
 		
-		$('#button2').click(function(){
-			playedKey = 50;
-			socket.emit('play', playedKey);
-			play();
-			console.log("Playing client tone");
-		});
+		for (var i = 0; i < 4; i++) {
+			sections.push("red");
+		}
 		
-		$('#button3').click(function(){
-			playedKey = 75;
-			socket.emit('play', playedKey);
-			play();
-			console.log("Playing client tone");
+		function drawNotes(notes) {
+			var colNum = 3;
+			var chosenCol = 0;
+			var note = notes.data[0];
+			
+			if(note > 70) {
+				chosenCol = 3;
+			} else if(note > 50) {
+				chosenCol = 2;
+			} else if(note > 35) {
+				chosenCol = 1;
+			} else {
+				chosenCol = 0;
+			}
+			
+			$('#s'+chosenCol).css("background", "black");	
+		}
+		
+		$("#s0").click(function(){
+			$("#s0").css("background", "red");
 		});
-		*/
-		/*
-		socket.on('playnote', function(note){
-			console.log("note is " + note);
-			playedKey = note;
-			play();
-			console.log("Playing server tone");
-		});*/
-
+		$("#s1").click(function(){
+			$("#s1").css("background", "red");
+		});
+		$("#s2").click(function(){
+			$("#s2").css("background", "red");
+		});
+		$("#s3").click(function(){
+			$("#s3").css("background", "red");
+		});
 		</script>
 	</body>
 </html>
