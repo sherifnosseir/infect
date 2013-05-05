@@ -19,6 +19,8 @@
         }, 0);
       });
 
+      document.ontouchmove = function(e) {e.preventDefault()};
+
 
       var canvas = document.getElementById('myCanvas');
       var context = canvas.getContext('2d');
