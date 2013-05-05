@@ -33,18 +33,21 @@ function MyCallback(obj) {
 	//alert("Done! check your console Log for output dump");
 };
 var midiObj;
+var startTime;
 function process(file) {
 
 	//console.log(file);
 
 	midiObj = JSMIDIParser.parse(file);
-	console.log(midiObj);
+	//console.log(midiObj);
 	var time = 0;
 	function sendall(thenode){
 		console.log('hello:' + thenode);
 		io.sockets.emit('playnote',thenode);
 		
 	}
+	var stime=new Date();
+	startTime=stime.getMilliseconds();
 	console.log(midiObj.track[1].event.length);
 	for ( n = 0; n < midiObj.track[1].event.length - 1; n++) {
 		console.log("type:"+midiObj.track[1].event[n].type);
@@ -62,6 +65,14 @@ function process(file) {
 	//process(midifile);
 
 	io.sockets.on('connection', function(socket) {
+		socket.on('connect',function(){
+			socket.emit('loadfile',midiObj);
+		});
+		socket.on('ready',function(){
+			var cdate=new Date();
+			ctime=cdate.getMilliseconds-startTime;
+			socket.emit('currenttime',ctime);
+		});
 
 		socket.on('my other event', function(data) {
 			console.log(data);
