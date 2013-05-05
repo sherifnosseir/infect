@@ -14,6 +14,12 @@
   <body>
     <canvas id="myCanvas" width="940" height="400"></canvas>
     <script>
+
+window.addEventListener("load",function() {
+  setTimeout(function(){
+    window.scrollTo(0, 1);
+  }, 1);
+});
     
       // prevent "bouncing"
       document.ontouchmove = function(e) {e.preventDefault()};
