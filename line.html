@@ -1,6 +1,9 @@
 <!DOCTYPE HTML>
 <html>
   <head>
+    <meta name="apple-mobile-web-app-capable" content="yes" />
+    <meta name="apple-mobile-web-app-status-bar-style" content="black" />
+    <link rel="stylesheet" type="text/css" href="line.css">
     <style>
       body {
         margin: 0px;
@@ -9,13 +12,18 @@
     </style>
   </head>
   <body>
-    <canvas id="myCanvas" width="960" height="640"></canvas>
+    <canvas id="myCanvas" width="940" height="400"></canvas>
     <script>
+    
+      // prevent "bouncing"
+      document.ontouchmove = function(e) {e.preventDefault()};
+
+
       var canvas = document.getElementById('myCanvas');
       var context = canvas.getContext('2d');
 
-      var maxX = 960;
-      var maxY = 440;
+      var maxX = 940;
+      var maxY = 400;
 
 
 
