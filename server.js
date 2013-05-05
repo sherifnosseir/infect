@@ -20,7 +20,7 @@ function handler(req, res) {
 var midifile;
 var nodeArray=new Array();
 
-fs.readFile('./test2.mid', function(err, data) {
+fs.readFile('./test.mid', function(err, data) {
 	midifile = data;
 	process(midifile);
 });
@@ -93,6 +93,7 @@ function process(file) {
 		});
 		
 		socket.on('userPlay',function(delay,trackNo){
+			console.log(delay+';;;;;'+trackNo);
 			socket.broadcast.emit('setDelay',delay,trackNo);
 		});
 		//socket.on('user')

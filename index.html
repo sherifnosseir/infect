@@ -40,15 +40,32 @@
 		var tracksArray = new Array(Array());
 		var myTrack=-1;
 		var tracksNum=new Array();
+		var delaysArray = new Array(Array());
+		var playtime=0;
+		var note1;
+		var note2;
+		var note3;
+		var note4;
+		
 		
 		
 		socket.emit("connect");
+		socket.on("setDelay",function(de,tra){
+			if(tra!=myTrack)
+				delaysArray[tra].push(de);
+				
+			
+		});
 		socket.on('loadfile', function(song,thetracks) {
 			// Begin loading indication.
 			var loader = new widgets.Loader({
 				message: "loading: Soundfont..."
 			});
 			tracksNum=thetracks;
+			for(var i=0;i<tracksNum.length;i++){
+				var p=new Array();
+				delaysArray.push(p);
+			}
 
 			//Set up MIDI properties
 			MIDI.loadPlugin({
@@ -80,27 +97,51 @@
 		});
 
 		function play() {
-			for(var i =0;i<tracksNum.length;i++){
+			var BPM=120;
+			
+			for(var i=0;i<midiObject.track[0].event.length;i++){
+				if(midiObject.track[0].event[i].metaType==81)
+					BPM=60000000/midiObject.track[0].event[i].data;
+				
+			}
+			
+			for(var i =0;i<1;i++){
+				var trackBPM=BPM;
+				var m=(trackBPM/60.0)/midiObject.timeDivision * 1000
+				console.log(trackBPM);
+				console.log(m);
 				trackNo=tracksNum[i];
 				time=0;
 				var nodeArray=new Array();
 				for ( n = 0; n < midiObject.track[trackNo].event.length - 1; n++) {
 					//console.log("type:"+midiObject.track[trackNo].event[n].type);
-					
+					if(midiObject.track[trackNo].event[n].metaType==81){
+						trackBPM=60000000/midiObject.track[trackNo].event[n].data;
+						 m=(trackBPM/60.0)/midiObject.timeDivision * 1000 ;
+						 console.log(trackBPM);
+						 console.log(m);
+					}
+						
 					
 					
 					if (midiObject.track[trackNo].event[n].type == 8 || midiObject.track[trackNo].event[n].type == 9) {
 						
 						var diff=time-mystartTime-animationDur;
-						console.log(diff);
+						//console.log(diff);
 						if(diff>0){
 							var note=midiObject.track[trackNo].event[n];
 							nodeArray.push(note);
-							setTimeout(function(){playNote(tracksArray[i].pop());},diff);
-							
+							if(trackNo==myTrack){
+								console.log('yes');
+								setTimeout(function(){playerTrack(tracksArray[myTrack][0]);tracksArray[myTrack].shift();},diff);
+							}else{
+								var tt;
+								tt=trackNo;
+								setTimeout(function(){serverTrack(tracksArray[tt][0]);tracksArray[tt].shift();},diff);
+							}
 						}
 							
-						time = time + midiObject.track[trackNo].event[n].deltaTime*(960/midiObject.timeDivision);
+						time = time + midiObject.track[trackNo].event[n].deltaTime*m/2;
 						
 					}
 					
@@ -113,35 +154,65 @@
 		}
 		
 		function playNote (node,track) {
+			
 			var delay = 0;
 			var note = node;
-			console.log("note:"+note);
+			//console.log("note:"+note);
 			var velocity = 127;
 			
 			
 			if(node.type == 8) {
-				MIDI.noteOff(0, note.data[0], delay);
+				MIDI.noteOff(0, node.data[0], delay);
 			} else {
-				MIDIs.noteOn(0, note.data[0], note.data[1], delay);
+				MIDIs.noteOn(0, node.data[0], node.data[1], delay);
 			}
 		}
 		function palyerTrack(node,track){
+			
 			var delay=animationDur;
-			var note=node
-			if(node.type == 8) {
-				MIDI.noteOff(0, note.data[0], delay);
-			} else {
-				MIDIs.noteOn(0, note.data[0], note.data[1], delay);
-			}
+			var note=node;
+			var stime=new Date();
+			var ctime = stime.getTime();
+			if(lastplaytime>playtime){
+				socket.emit('userPlay',myTrack,-1);
+				wrong_region=0;
+			}	
+			else
+				if(wrong_region==1){
+					wrong_regison=0;
+					socket.emit('userPlay',myTrack,0);
+				}else if(wrong_region==2){
+					socket.emit('userPlay',myTrack,-2);
+					
+				}
+				
+				
+			Lastplaytime=ctime;
+			//animate bar;
+			//assigne randmon region
+			
+			
 			
 		}
+		function clickNote(){
+			node=node1;
+			MIDIs.noteOn(0, node.data[0], node.data[1], delay);
+		}
 		function serverTrack(node,track){
-			var delay=animationDur;
-			var note=node
+			
+			var del=delaysArray[track][0];
+			if(del==null){return};
+			delaysArray[track].shift();
+			if(del==-1)node.type=8;
+			if(del==-2)node.data[0]=21;
+			
+			
+			var note=node;
+			
 			if(node.type == 8) {
-				MIDI.noteOff(0, note.data[0], delay);
+				MIDIs.noteOff(0, node.data[0], delay);
 			} else {
-				MIDIs.noteOn(0, note.data[0], note.data[1], delay);
+				MIDIs.noteOn(0, node.data[0], node.data[1], delay);
 			}
 		}
 		
