@@ -46,10 +46,12 @@
 		var tracksNum=new Array();
 		var delaysArray = new Array(Array());
 		var playtime=0;
-		var note1;
-		var note2;
-		var note3;
-		var note4;
+		var node1;
+		var node2;
+		var node3;
+		var node4;
+		var lastplaytime=0;
+		var wrong_region=0;
 		
 		
 		socket.emit("connect");
@@ -109,7 +111,7 @@
 				
 			}
 			
-			for(var i =0;i<1;i++){
+			for(var i =0;i<2;i++){
 				var trackBPM=BPM;
 				var m=(trackBPM/60.0)/midiObject.timeDivision * 1000
 				console.log(trackBPM);
@@ -132,13 +134,13 @@
 						if(diff>0){
 							var note=midiObject.track[trackNo].event[n];
 							nodeArray.push(note);
-							if(trackNo==myTrack){
+							if(trackNo==tracksNum[myTrack]){
 								console.log('yes');
-								setTimeout(function(){playerTrack(tracksArray[myTrack][0]);tracksArray[myTrack].shift();},diff);
+								setTimeout(function(){playerTrack(tracksArray[tracksNum[myTrack]][0],tracksNum[myTrack]);tracksArray[tracksNum[myTrack]].shift();},diff);
 							}else{
 								var tt;
 								tt=trackNo;
-								setTimeout(function(){serverTrack(tracksArray[tt][0]);tracksArray[tt].shift();},diff);
+								setTimeout(function(){serverTrack(tracksArray[tt][0],tt);tracksArray[tt].shift();},diff);
 							}
 						}
 						time = time + midiObject.track[trackNo].event[n].deltaTime*m/2;						
@@ -154,7 +156,7 @@
 		}
 		
 		var nodeCount = 0;
-		var modCount = 7;
+		var modCount = 5;
 		
 		function playNote (node,track) {			
 				var delay = 0;
@@ -166,16 +168,13 @@
 				} else {
 					MIDI.noteOn(0, note.data[0], note.data[1], delay);
 				}
-				if(nodeCount%modCount == 0) {
-					drawNotes(note);
-				}
-			nodeCount++;
 		}
 		
-		function palyerTrack(node,track){
+		function playerTrack(node,track){
 			
 			var delay=animationDur;
 			var note=node;
+			console.log("nono");
 
 			var stime=new Date();
 			var ctime = stime.getTime();
@@ -183,7 +182,7 @@
 				socket.emit('userPlay',myTrack,-1);
 				wrong_region=0;
 			}	
-			else
+			else{
 				if(wrong_region==1){
 					wrong_regison=0;
 					socket.emit('userPlay',myTrack,0);
@@ -191,20 +190,41 @@
 					socket.emit('userPlay',myTrack,-2);
 					
 				}
-				
-				
+			}
+				var region=0;
+					if(nodeCount%modCount == 0) {
+						
+						region=drawNotes(note);
+						console.log(region);
+					}
+					
+				nodeCount++;
 			Lastplaytime=ctime;
 			//animate bar;
 			//assigne randmon region
+			
 		}
-		function clickNote(){
+		function clickNote1(){
 			node=node1;
-			MIDIs.noteOn(0, node.data[0], node.data[1], delay);
+			MIDIs.noteOn(0, node.data[0], node.data[1], 0);
 		}
+		function clickNote2(){
+			node=node2;
+			MIDIs.noteOn(0, node.data[0], node.data[1], 0);
+		}
+		function clickNote3(){
+			node=node3;
+			MIDIs.noteOn(0, node.data[0], node.data[1], 0);
+		}
+		function clickNote4(){
+			node=node4;
+			MIDIs.noteOn(0, node.data[0], node.data[1], 0);
+		}
+		
 		function serverTrack(node,track){
 			
 			var del=delaysArray[track][0];
-			if(del==null){return};
+			if(del==null){return;}
 			delaysArray[track].shift();
 			if(del==-1)node.type=8;
 			if(del==-2)node.data[0]=21;
@@ -227,31 +247,45 @@
 		function drawNotes(notes) {
 			var colNum = 3;
 			var chosenCol = 0;
-			var note = notes.data[0];
-			
-			if(note > 70) {
+			var note = notes;
+			var region=Math.floor((Math.random()*4));
+			if(region==0) {
 				chosenCol = 3;
-			} else if(note > 50) {
+				node1=notes;
+			} else if(region==1) {
 				chosenCol = 2;
-			} else if(note > 35) {
+				node2=ntoes;
+			} else if(region==2) {
 				chosenCol = 1;
+				node3=notes;
 			} else {
 				chosenCol = 0;
+				node4=notes;
 			}
 			
 			$('#s'+chosenCol).css("background", "black");	
+			return chosenCol;
 		}
-		
+		var todate=new Date();
 		$("#s0").click(function(){
+			playtime=todate.getTime();
+			clickNote1();
 			$("#s0").css("background", "red");
 		});
 		$("#s1").click(function(){
+			playtime=todate.getTime();
+			clickNote2();
+			
 			$("#s1").css("background", "red");
 		});
 		$("#s2").click(function(){
+			playtime=todate.getTime();
+			clickNote3();
 			$("#s2").css("background", "red");
 		});
 		$("#s3").click(function(){
+			playtime=todate.getTime();
+			clickNote4();
 			$("#s3").css("background", "red");
 		});
 		</script>
