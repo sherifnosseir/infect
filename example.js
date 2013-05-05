@@ -25,6 +25,6 @@ io.sockets.on('connection', function (socket) {
     console.log(data);
   });
   socket.on('play',function(){
-  	io.broadcast.emit('playnote',90);
+  	socket.broadcast.emit('playnote',90);
   })
 });
