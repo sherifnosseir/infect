@@ -55,9 +55,8 @@
       var whichCol = Math.floor((Math.random()*maxCols));
       // var firstY = Math.floor((Math.random()*(maxY-topAndBottomPadding))+topAndBottomPadding/2)-((numLines-1)*lineDistance); // y position of the top line
       var firstY = Math.floor((Math.random()*(maxY-maxLineHeight))+maxLineHeight/2); // y position of the top line
-      //var lineHeight = Math.floor((Math.random()*maxLineHeight)+1);
-      var lineHeight = 200;
-
+      var lineHeight = Math.floor((Math.random()*maxLineHeight)+1);
+      
       // vertical grid
       for (var i = 0; i < maxCols; i++) {
         context.beginPath();
@@ -166,7 +165,7 @@
         //clear();
         context.save();
         context.fillStyle = "blue";
-        context.fillRect(whichCol*lineLength, firstY-lineHeight/2, timerWidth, lineHeight); //asdfljasdfl;jaf
+        context.fillRect(whichCol*lineLength+lineLength/2-timerWidth/2, firstY-lineHeight/2, timerWidth, lineHeight); //asdfljasdfl;jaf
         context.restore();
       }
 
