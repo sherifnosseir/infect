@@ -20,7 +20,7 @@ function handler(req, res) {
 var midifile;
 var nodeArray=new Array();
 
-fs.readFile('./test.mid', function(err, data) {
+fs.readFile('./test2.mid', function(err, data) {
 	midifile = data;
 	process(midifile);
 });
@@ -41,9 +41,9 @@ function process(file) {
 	}
 	var stime=new Date();//compute start time of the current midi file
 	startTime=stime.getMilliseconds();
-	
+	/*
 	for ( n = 0; n < midiObj.track[1].event.length - 1; n++) {
-		console.log("type:"+midiObj.track[1].event[n].type);
+		//console.log("type:"+midiObj.track[1].event[n].type);
 		if (midiObj.track[1].event[n].type == 8 || midiObj.track[1].event[n].type == 9) {
 			var note=midiObj.track[1].event[n].data[0];
 			nodeArray.push(note);
@@ -53,7 +53,7 @@ function process(file) {
 		//console.log(time);
 		//console.log(n);
 		//console.log(t);
-	}
+	}*/
 
 	//process(midifile);
 
@@ -62,11 +62,16 @@ function process(file) {
 			socket.emit('loadfile',midiObj);
 		});
 		socket.on('ready',function(){
-			var cdate=new Date();
+			var cdate=new Date();/*
 			ctime=cdate.getMilliseconds-startTime;
 			if(trackAssigned>=TrackNum)
 				socket.emit(-1);
-			else()
+			else{
+				trackAssigned++;
+				socket.emit(track)
+			}
+				*/
+				ctime=0;
 			socket.emit('currenttime',ctime);
 		});
 
@@ -74,7 +79,7 @@ function process(file) {
 			socket.broadcast.emit('playnote', playedNote);
 		})
 		
-		socket.on('user')
+		//socket.on('user')
 	});
 
 }

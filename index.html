@@ -36,7 +36,7 @@
 		var start = false;
 		var currentTime;
 		var nodeArray = new Array();
-		var time;
+		
 		
 		socket.emit("connect");
 		socket.on('loadfile', function(song) {
@@ -74,12 +74,13 @@
 
 		function play() {
 			if(start) {
+				time=0
 				for ( n = 0; n < midiObject.track[1].event.length - 1; n++) {
 					console.log("type:"+midiObject.track[1].event[n].type);
 					if (midiObject.track[1].event[n].type == 8 || midiObject.track[1].event[n].type == 9) {
 						var note=midiObject.track[1].event[n].data[0];
 						nodeArray.push(note);
-						setInterval(function(){playNote(nodeArray.pop());}, time*500);
+						setTimeout(function(){playNote(nodeArray.pop());}, time*12);
 						time = time + midiObject.track[1].event[n].deltaTime;
 					}
 					//console.log(time);
@@ -91,7 +92,7 @@
 		
 		function playNote (node) {
 			var delay = 0;
-			var note = MIDIs.pianoKeyOffset + node;
+			var note = node;
 			console.log("note:"+note);
 			var velocity = 127;
 			
