@@ -2,6 +2,7 @@
 <html>
   <head>
     <meta name="apple-mobile-web-app-capable" content="yes" />
+    <meta name="apple-mobile-web-app-status-bar-style" content="black" />
     <link rel="stylesheet" type="text/css" href="line.css">
     <style>
       body {
@@ -10,18 +11,11 @@
       }
     </style>
   </head>
-  <body onload="setTimeout(function() {window.scrollTo(0,1);}, 1);">
+  <body>
     <canvas id="myCanvas" width="940" height="400"></canvas>
     <script>
-
-      window.addEventListener("load",function() {
-  // Set a timeout...
-  setTimeout(function(){
-    // Hide the address bar!
-    window.scrollTo(0, 1);
-  }, 0);
-});
-
+    
+      // prevent "bouncing"
       document.ontouchmove = function(e) {e.preventDefault()};
 
 
