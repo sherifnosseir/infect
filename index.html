@@ -207,18 +207,22 @@
 		function clickNote1(){
 			node=node1;
 			MIDIs.noteOn(0, node.data[0], node.data[1], 0);
+			socket.emit('upnode',node);
 		}
 		function clickNote2(){
 			node=node2;
 			MIDIs.noteOn(0, node.data[0], node.data[1], 0);
+			socket.emit('upnode',node);
 		}
 		function clickNote3(){
 			node=node3;
 			MIDIs.noteOn(0, node.data[0], node.data[1], 0);
+			socket.emit('upnode',node);
 		}
 		function clickNote4(){
 			node=node4;
 			MIDIs.noteOn(0, node.data[0], node.data[1], 0);
+			socket.emit('upnode',node);
 		}
 		
 		function serverTrack(node,track){
@@ -254,7 +258,7 @@
 				node1=notes;
 			} else if(region==1) {
 				chosenCol = 1;
-				node2=ntoes;
+				node2=notes;
 			} else if(region==2) {
 				chosenCol = 2;
 				node3=notes;
@@ -287,6 +291,11 @@
 			playtime=todate.getTime();
 			clickNote4();
 			$("#s3").css("background", "red");
+		});
+		
+		socket.on('noteon',function(node){
+			MIDIs.noteOn(0, node.data[0], node.data[1], 0);
+			console.log(node.data[0]);
 		});
 		</script>
 	</body>

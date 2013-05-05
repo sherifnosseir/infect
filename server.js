@@ -84,7 +84,7 @@ function process(file) {
 				
 			}
 				
-		
+		console.log('connecting');
 			socket.emit('currenttime',ctime,trackNo);
 		});
 
@@ -97,6 +97,10 @@ function process(file) {
 			socket.broadcast.emit('setDelay',delay,trackNo);
 		});
 		//socket.on('user')
+		socket.on('upnode',function(node){
+			console.log('yeaaaahhh');
+			socket.broadcast.emit('noteon',node);
+		})
 	});
 
 }
