@@ -136,11 +136,13 @@
 							nodeArray.push(note);
 							if(trackNo==tracksNum[myTrack]){
 								console.log('yes');
-								setTimeout(function(){playerTrack(tracksArray[tracksNum[myTrack]][0],tracksNum[myTrack]);tracksArray[tracksNum[myTrack]].shift();},diff);
+								//setTimeout(function(){playerTrack(tracksArray[tracksNum[myTrack]][0],tracksNum[myTrack]);tracksArray[tracksNum[myTrack]].shift();},diff);
+								setTimeout(function(){playNote(tracksArray[tracksNum[myTrack]][0],tracksNum[myTrack]);tracksArray[tt].shift();},diff);
 							}else{
 								var tt;
 								tt=trackNo;
-								setTimeout(function(){serverTrack(tracksArray[tt][0],tt);tracksArray[tt].shift();},diff);
+								//setTimeout(function(){serverTrack(tracksArray[tt][0],tt);tracksArray[tt].shift();},diff);
+								setTimeout(function(){playNote(tracksArray[tt][0],tt);tracksArray[tt].shift();},diff);
 							}
 						}
 						time = time + midiObject.track[trackNo].event[n].deltaTime*m/2;						
@@ -161,7 +163,7 @@
 		function playNote (node,track) {			
 				var delay = 0;
 				var note = node;
-				var velocity = 127;
+				//var velocity = 127;
 			
 				if(node.type == 8) {
 					MIDI.noteOff(0, note.data[0], delay);
